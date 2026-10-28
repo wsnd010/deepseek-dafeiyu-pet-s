@@ -18,6 +18,7 @@ worker 里只 `emit`，槽函数跑在主线程。
 from __future__ import annotations
 
 import threading
+from .node import BASE_URL, MODEL, current_model
 
 from PySide6.QtCore import QEvent, QObject, QPoint, QRect, Qt, QTimer, Signal
 from PySide6.QtGui import QColor, QPainter, QPen
@@ -29,8 +30,8 @@ except Exception:                     # 没装 requests 也要能加载（到时
     requests = None
 
 
-DS_URL = "https://api.deepseek.com/v1/chat/completions"
-DS_MODEL = "deepseek-chat"
+DS_URL = BASE_URL + "/v1/chat/completions"
+DS_MODEL = MODEL
 DS_TIMEOUT = 60                       # 秒。长回复要慢一些，10 秒（老版本）经常不够
 DS_MAX_TOKENS = 800                   # 浮窗装得下，不用再压到 100
 HISTORY_MAX = 40                      # 默认最多记 40 条（20 轮）
@@ -60,9 +61,9 @@ def post_json(url, payload, key, timeout=DS_TIMEOUT):
     except Exception as exc:
         name = type(exc).__name__
         if "Timeout" in name:
-            raise ChatError("等太久了（60 秒没回），网络或者 DeepSeek 那边慢") from exc
+            raise ChatError("等太久了（60 秒没回），请检查 Sub2API 节点") from exc
         if "Connection" in name or "SSL" in name:
-            raise ChatError("连不上 api.deepseek.com，检查一下网络 / 代理") from exc
+            raise ChatError(f"连不上 Sub2API 节点 {BASE_URL}，请检查网络") from exc
         raise ChatError(f"请求失败：{name}: {exc}") from exc
 
     if resp.status_code != 200:
@@ -72,12 +73,12 @@ def post_json(url, payload, key, timeout=DS_TIMEOUT):
         except Exception:
             detail = (resp.text or "")[:120]
         if resp.status_code == 401:
-            raise ChatError("Key 不对（401）。设置 → 余额和用量 → 设置 Key 里改一下")
+            raise ChatError("Sub2API 节点鉴权失败（401）。请在设置 → 余额和用量 → 设置 Key 核对节点 Key（不要带句号或 Bearer 前缀）")
         if resp.status_code == 402:
-            raise ChatError("余额不足（402），去 DeepSeek 充点钱吧")
+            raise ChatError("Sub2API 节点余额或额度不足（402）")
         if resp.status_code == 429:
             raise ChatError("请求太频繁（429），等几秒再说")
-        raise ChatError(f"DeepSeek 返回 {resp.status_code}：{detail or '没有说明'}")
+        raise ChatError(f"Sub2API 返回 {resp.status_code}：{detail or '没有说明'}")
     try:
         return resp.json()
     except Exception as exc:
@@ -410,7 +411,7 @@ class ChatExtension(QObject):
         if fly.message_count() == 0 and not self._opened_once:
             self._opened_once = True
             if not self._key():
-                fly.add("note", "还没配 DeepSeek Key：设置 → 余额和用量 → 设置 Key。"
+                fly.add("note", "还没配 Sub2API 节点 Key：设置 → 余额和用量 → 设置 Key。"
                                 "配好再说话就能聊了。")
             else:
                 fly.add("note", "在这儿跟她说话吧，回车发送。（右上角那个键清空对话）")
@@ -432,17 +433,21 @@ class ChatExtension(QObject):
         key = self._key()
         if not key:
             if fly is not None:
-                fly.add("note", "还没配 DeepSeek Key：设置 → 余额和用量 → 设置 Key")
+                fly.add("note", "还没配 Sub2API 节点 Key：设置 → 余额和用量 → 设置 Key")
             return
 
         self._busy = True
+        living = getattr(self.pet, "ext", {}).get("living")
+        if living is not None:
+            living.touch()
         self._remember("user", text)          # 先记下这句，历史才是一问一答配对
         if fly is not None:
             fly.set_busy(True)
         self._play_thinking()
-        threading.Thread(target=self._worker, args=(text, key), daemon=True).start()
+        model = current_model(self.pet.cfg)
+        threading.Thread(target=self._worker, args=(text, key, model), daemon=True).start()
 
-    def _worker(self, text, key):
+    def _worker(self, text, key, model=DS_MODEL):
         """**worker 线程**：只发请求 + emit，别碰 UI。"""
         msgs = [{"role": "system", "content": self._system()}]
         # ⚠️ 这句在 `send()` 里已经 `_remember` 进 history 了，**这里不能再 append 一次**：
@@ -452,7 +457,7 @@ class ChatExtension(QObject):
         if not hist or hist[-1].get("role") != "user" or hist[-1].get("content") != text:
             hist.append({"role": "user", "content": text})
         msgs.extend(hist)
-        payload = {"model": DS_MODEL, "messages": msgs,
+        payload = {"model": model, "messages": msgs,
                    "max_tokens": DS_MAX_TOKENS, "temperature": 0.9}
         try:
             data = post_json(DS_URL, payload, key)

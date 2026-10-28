@@ -9,10 +9,10 @@ English | [中文](README.md) → [README.en.md](README.en.md)
 
 ## ⬇️ 下载即用（Windows）
 
-[![最新版本](https://img.shields.io/github/v/release/RYANFFY/deepseek-dafeiyu-pet?label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC&v=3&cacheSeconds=300)](https://github.com/RYANFFY/deepseek-dafeiyu-pet/releases/latest)
-[![下载量](https://img.shields.io/github/downloads/RYANFFY/deepseek-dafeiyu-pet/total?label=%E4%B8%8B%E8%BD%BD%E9%87%8F&v=3&cacheSeconds=300)](https://github.com/RYANFFY/deepseek-dafeiyu-pet/releases)
+[![最新版本](https://img.shields.io/github/v/release/wsnd010/deepseek-dafeiyu-pet-s?label=%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC&v=4&cacheSeconds=300)](https://github.com/wsnd010/deepseek-dafeiyu-pet-s/releases/latest)
+[![下载量](https://img.shields.io/github/downloads/wsnd010/deepseek-dafeiyu-pet-s/total?label=%E4%B8%8B%E8%BD%BD%E9%87%8F&v=4&cacheSeconds=300)](https://github.com/wsnd010/deepseek-dafeiyu-pet-s/releases)
 
-### 👉 [**点这里下载最新版（Windows 安装版）**](https://github.com/RYANFFY/deepseek-dafeiyu-pet/releases/latest/download/dafeiyu-pet-setup.exe)
+### 👉 [**点这里下载最新版（Windows 安装版）**](https://github.com/wsnd010/deepseek-dafeiyu-pet-s/releases/latest/download/dafeiyu-pet-setup.exe)
 
 约 257MB 的中文安装包（大头是 239MB 的灵动版动作素材）：**双击一路「下一步」就行，
 中间那一步能自己选装在哪儿**
@@ -20,7 +20,7 @@ English | [中文](README.md) → [README.en.md](README.en.md)
 **安装包本身可以直接删掉**。（这个链接永远指向最新版，可以直接收藏）
 
 - 首次运行 Windows 可能提示"未知发布者"（没做代码签名）→ 点「更多信息」→「仍要运行」即可
-- 想看历史版本 / 更新说明：[Releases 页面](https://github.com/RYANFFY/deepseek-dafeiyu-pet/releases) ｜ [CHANGELOG](CHANGELOG.md)
+- 想看历史版本 / 更新说明：[Releases 页面](https://github.com/wsnd010/deepseek-dafeiyu-pet-s/releases) ｜ [CHANGELOG](CHANGELOG.md)
 - 打包版的设置写在 `%APPDATA%\大肥鱼桌宠\`（不会往桌面丢文件）
 - 用完想卸载：去「设置 → 应用」里点卸载；想连配置一起清掉，再删上面那个配置目录
 
@@ -41,6 +41,17 @@ English | [中文](README.md) → [README.en.md](README.en.md)
 
 > 详细改动见 [CHANGELOG](CHANGELOG.md) 最前面两节。
 
+## 🚧 当前开发版新增
+
+- **大肥鱼本地语音**：用 GPT-SoVITS 微调的大肥鱼声音朗读聊天、AI 陪伴、点击拖拽、投喂、任务通知和其他气泡；七类声音可以分别开关，心声默认不读。语音会跟随 Windows 默认输出设备，运行中插拔耳机也能切换。
+- **聊天与模型选择**：从桌宠旁边展开聊天窗口，连接自己的兼容节点；可获取节点模型列表、选择模型，并保留聊天记录。聊天和派活是两条独立通道。
+- **拖文件派活**：把文件拖到桌宠身上，可交给 Codex、DSH 或自定义 Agent，也可以只用默认程序打开；浮窗显示运行状态、结果和输出文件入口，任务结束后由桌宠和系统通知提醒。
+- **主动陪伴与模拟情绪**：开心、专注、困倦、好奇、惦记、安心六种状态会影响台词和已有动作。可选择纯本地台词，或让当前聊天节点结合时段、应用类别、离开状态、音乐和 Codex 状态生成一句话。
+- **喂食、监控与 Codex 联动**：可以投喂小鱼干、蛋糕、棒棒糖、团子和钻石；支持 CPU、内存、NVIDIA 温度提醒，并根据 Codex 的思考、读文件、写代码、运行命令、等待确认、完成和出错切换状态立绘。
+- **任务完成通知**：增量监听本机 Codex / DSH 会话，用户自己在工具里开的任务也能收到提醒；通知只显示任务标题，不展示任务结果内容。
+
+这些功能尚未打进正式 Release，直接运行源码即可体验。详细状态、实测记录和已知限制见 [CHANGELOG](CHANGELOG.md) 与 [本次验收清单](本次验收清单.md)。
+
 DeepSeek V4 Pro 二创形象「鲸鱼娘 · 大肥鱼」的透明桌面宠物（Windows 独立桌面版）。
 基于三视图素材（正面 / 侧面 / 背面），用 Python + PySide6 实现，无边框透明窗口；
 在这套桌宠基础上并入了 **DeepSeek Harness（DSH）小鲸鱼余额挂件**的能力 ——
@@ -50,8 +61,8 @@ DeepSeek V4 Pro 二创形象「鲸鱼娘 · 大肥鱼」的透明桌面宠物（
 ## 功能
 
 - **设置窗口**：右键菜单第一条 →「打开设置…」，弹出的是一个正经的设置窗口 ——
-  左边 **14 个分类**（余额和用量 / 桌宠形象 / 界面外观 / 动作和互动 / 天气和城市 /
-  音乐和歌词 / 文案和语录 / 音效 / 应用联动 / 聊天 / 派活 / 性能和工具 / 通用 / 关于），
+  左边包含余额和用量 / 桌宠形象 / 界面外观 / 动作和互动 / 天气和城市 /
+  音乐和歌词 / 文案和语录 / 音效 / 应用联动 / 喂食和状态 / 聊天 / 语音 / 派活 / 性能和工具 / 通用 / 关于，
   右边是那一类的设置。分类**可以按住拖动排序**（「关于」固定在最末），
   拖乱了点侧栏底部的「恢复默认顺序」还原。
   支持**亮色 / 暗色 / 跟随系统**（默认跟 Windows 深色模式走）
@@ -457,12 +468,16 @@ PyInstaller 把本机其它运行时里的 ICU（`icuuc.dll` / `icudt*.dll`）�
 
 ## 贡献与致谢
 
+- **情绪与主动陪伴**：设置 → 喂食和状态，可调 2/5/10/20 分钟主动说话间隔。默认本地情境台词；启用 AI 情境说话后，应用类别、时段、离开状态、音乐开关和 Codex 状态摘要发往当前聊天节点，产生用量。不读取窗口标题/正文、截图或剪贴板。六种情绪是模拟状态，驱动现有姿势和动作；不会判断你的真实情绪。
+
+- **本地互动增强**：设置 →「喂食和状态」提供五种投喂、CPU/内存/NVIDIA 温度提醒和 Codex 本地状态联动。监控每 10 秒采样，同项提醒冷却 5 分钟；可单独关闭监控与联动。状态来自本机 `.codex`、`.codex-deepseek` 或 `CODEX_HOME` 会话日志，不上传日志内容。120 秒无新日志回到空闲。
+- **Codex 状态立绘**：参考 [mdd111/deepseek-dafeiyu-pet](https://github.com/mdd111/deepseek-dafeiyu-pet)，素材位于 `sprites/dsh`，MIT 许可证随目录保留。启用时切换三视图承载，关闭后恢复原形象。喂食和系统监控交互也参考 [1190fasheqi/dafeiyu-pet](https://github.com/1190fasheqi/dafeiyu-pet)。
+
 - **AI 对话 / 天气查询 / 系统监控 / PyInstaller 打包配置**：由 [Cpanoe](https://github.com/Cpanoe) 通过 [PR#3](https://github.com/1190fasheqi/dafeiyu-pet/pull/3) 贡献（DeepSeek API 聊天、wttr.in 天气、CPU/内存/GPU 监控、桌宠.spec）。
 - 合并时维护方修复：
   - 线程安全：DeepSeek 回复由后台线程直接调用 Qt 界面改为经队列转发主线程（`_say_queue`）
   - 配置保护：`config.json` 保持不入仓库（本地配置含 API Key，防止泄露）
-- **本仓库的改造**（[RYANFFY/deepseek-dafeiyu-pet](https://github.com/RYANFFY/deepseek-dafeiyu-pet)）：在原桌宠基础上删掉 AI 对话 / 喂食 / 系统状态监控，
-  只留「移动 + 天气 + 外观」，再从 [MeteorNOX/DeepSeek-Balance-Whale-Widget](https://github.com/MeteorNOX/DeepSeek-Balance-Whale-Widget)（MIT）
+- **本项目的主要改造**（[wsnd010/deepseek-dafeiyu-pet-s](https://github.com/wsnd010/deepseek-dafeiyu-pet-s)）：在桌宠基础上持续完善移动、天气、外观、聊天、派活、主动陪伴、喂食、系统监控、Codex 联动与本地语音，并从 [MeteorNOX/DeepSeek-Balance-Whale-Widget](https://github.com/MeteorNOX/DeepSeek-Balance-Whale-Widget)（MIT）
   并入余额挂件那套能力（余额泡泡、今日已用记账、数字滚动、四边吸附、左吸附翻面、按压 Q 弹、按键音效），
   并额外做了：峰谷时段显示、每轮消耗统计（Agent 名称 / 日志目录可配、兼容多种日志结构）、
   常开音频流音效、自定义形象（三视图逐个可换）、层级与透明度、单实例、
@@ -472,6 +487,27 @@ PyInstaller 把本机其它运行时里的 ICU（`icuuc.dll` / `icudt*.dll`）�
 ## 台词梗来源
 
 台词均取自 DeepSeek / 鲸鱼娘 / 大肥鱼社区梗（D指导去吃饭、吃白饭、梁文锋会议三连、"才不是大肥鱼"、思维链心声等），感谢社区整活。
+
+## 本地聊天语音
+
+设置 →「语音」可启用朗读，选择「大肥鱼 · 训练版」或「大肥鱼 · 底模对照」，调节独立音量并试听、停止。聊天回复、AI 日常陪伴与闲聊、心声、点击与拖拽回嘴、喂食反馈、任务通知、其他提示七类声音可以分别开关，心声默认关闭。聊天历史不读，聊天回复不会与缩略气泡重复朗读；连续气泡顺序播放，最多保留六条待读内容。隐藏、全屏和免打扰时跳过自动朗读。语音跟随系统默认输出，启动后再连接或断开耳机也会切换。首次加载模型需等待几十秒，空闲一分钟释放显存。
+
+本机已准备好的 CUDA 环境、GPT-SoVITS、训练权重和参考音频位于 `I:\dafeiyu-voice`。设置页可选择其他准备完整的非 C 盘语音目录，桌宠自身无需安装 PyTorch，环境与大模型不随桌宠安装包分发。临时 WAV 在语音目录的 `cache/pet_voice` 中，播放结束后清理；失败详情见该目录的 `logs/pet-voice.log`。手动测试菜单第 8 项为集成自检，第 7 项保留独立训练试听。
+
+训练素材来自 [YinZilu/da-fei-yu-girl-voice-zh](https://www.modelscope.cn/datasets/YinZilu/da-fei-yu-girl-voice-zh)，作者尹紫鹭幻想社，素材采用 CC BY-NC 4.0；该素材及模型相关使用应遵循其许可，项目源码许可见下。
+
+## 特别感谢
+
+- [1190fasheqi/dafeiyu-pet](https://github.com/1190fasheqi/dafeiyu-pet)：原始大肥鱼桌宠、AI 对话、天气、系统监控及打包工作的基础。
+- [MeteorNOX/DeepSeek-Balance-Whale-Widget](https://github.com/MeteorNOX/DeepSeek-Balance-Whale-Widget)：余额挂件、用量统计、吸附、音效等能力的参考与来源。
+- [PC2005-cloud/dsh-pet](https://github.com/PC2005-cloud/dsh-pet)：灵动版透明动作素材。
+- [mdd111/deepseek-dafeiyu-pet](https://github.com/mdd111/deepseek-dafeiyu-pet)：Codex 状态立绘参考与素材。
+- [GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS)：本地语音训练与推理框架。
+- [YinZilu/da-fei-yu-girl-voice-zh](https://www.modelscope.cn/datasets/YinZilu/da-fei-yu-girl-voice-zh) 与尹紫鹭幻想社：大肥鱼语音训练素材。
+- [lucide-icons/lucide](https://github.com/lucide-icons/lucide) 与 [xinntao/Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN)：界面图标与构建期动画超分工具。
+- [Cpanoe](https://github.com/Cpanoe)、[B-A-A-GE](https://github.com/B-A-A-GE) 以及所有上游作者、贡献者和社区用户。
+
+完整的素材范围、许可证和分发声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ## 协议
 

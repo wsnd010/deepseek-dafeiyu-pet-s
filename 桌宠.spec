@@ -6,6 +6,8 @@ import shiboken6
 from PyInstaller.utils.hooks import collect_all
 
 datas = [('sprites', 'sprites'), ('assets', 'assets')]
+# 由外部 CUDA 环境执行，需要真实脚本；模型和环境仍放在独立语音目录。
+datas += [('pet_ext/voice_worker.py', 'pet_ext'), ('pet_ext/voice_paths.py', 'pet_ext')]
 # ⚠️ 灵动版（SKIN_ANIM）的帧序列在 sprites_anim/（239MB，8900 多个 webp）。
 # 少了这一行，打出来的安装包里 `anim.py` 会打印「没找到 sprites_anim/manifest.json」
 # 然后退回三视图 —— 新素材 / 原地转头 / 蟹步走位全都没有（2026-10-27 查出来的）。

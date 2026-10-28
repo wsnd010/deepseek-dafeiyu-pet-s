@@ -414,6 +414,8 @@ DRAG_RESIZE_JUMP = 4
 # 语录（闲着时自己冒话）的触发频率档位
 # cooldown = 两句之间最少隔多少帧（20ms/帧）。"正常"就是原来的行为，其它档只动这个间隔。
 LINE_FREQ_LEVELS = {
+    "5分钟": {"cooldown": 15000, "hint": "至少 5 分钟一句"},
+    "2分钟": {"cooldown": 6000, "hint": "至少 2 分钟一句"},
     "安静": {"cooldown": 1500, "hint": "约 30 秒一句"},
     "正常": {"cooldown": 600, "hint": "约 12~17 秒一句"},
     "话多": {"cooldown": 300, "hint": "约 7~8 秒一句"},
@@ -7116,7 +7118,7 @@ class PetWindow(QWidget):
                 l3 = "该服务不提供余额接口"
                 show_peak_line = False
             else:
-                l1 = f"{src} 余额"
+                l1 = "余额" if src == "Sub2API" else ("剩余额度" if src == "Sub2API 剩余额度" else f"{src} 余额")
                 l2 = f"{symbol} {self._display_amount():.2f}".strip()
                 l3 = (f"今日已用 {symbol} {self.balance['today']:.2f}".strip()
                       if src == "DeepSeek" else "今日已用 仅 DeepSeek 支持")

@@ -1702,10 +1702,13 @@ class ConsoleWindow(QWidget):
          "nav.lines", "_page_lines"),
         ("sound", "音效", "点击音、任务完成提示音、音量，都在这儿",
          "nav.sound", "_page_sound"),
+        ("voice", "语音", "气泡和聊天朗读、语音模型与音量", "nav.sound", "_page_voice"),
         ("integration", "应用联动", "应用启动 / 时长 / 定时 / 免打扰",
          "nav.integration", "_page_integration"),
         ("chattune", "聊天", "她记得什么、用什么人设",
          "ui.chat", "_page_chattune"),
+        ("companion", "喂食和状态", "投喂、系统提醒、Codex 联动立绘",
+         "ui.chat", "_page_companion"),
         ("dispatch", "派活", "拖文件交给哪个 Agent，可以自己加",
          "ui.chat", "_page_dispatch"),
         ("performance", "性能和工具", "流畅度、回收内存",
@@ -2772,7 +2775,7 @@ class ConsoleWindow(QWidget):
             self.bal_amount.setText(f"{sign}{pet._display_amount():.2f}")
             self.bal_amount.setStyleSheet("")
             self.bal_note.setText(
-                f"来源：{balance.get('name', '?')}，今日已用 "
+                f"来源：DeepSeek，今日已用 "
                 f"{sign}{(balance.get('today') or 0.0):.2f}")
 
     # ---------------- 余额和用量 ----------------
@@ -3586,7 +3589,7 @@ class ConsoleWindow(QWidget):
 
         card = page.card("语录", "闲置时自动说话", "ui.quote")
         levels = list((self.ctx.get("LINE_FREQ_LEVELS") or {}).items())
-        page.combo(card, "语录频率", "控制自动说话的间隔",
+        page.combo(card, "语录频率", "与主动陪伴共用；键鼠活跃时暂停闲聊",
                    [(name, f"{name}（{conf.get('hint', '')}）")
                     for name, conf in levels],
                    pet.line_freq,
@@ -3636,6 +3639,10 @@ class ConsoleWindow(QWidget):
         self._sync_lines_controls()
 
     # ---------------- 音效 ----------------
+    def _page_voice(self, page):
+        from pet_ext.voice_settings import VoiceSettings
+        self._voice_settings = VoiceSettings(page, self.pet)
+
     def _page_sound(self, page):
         pet = self.pet
 
@@ -3979,12 +3986,79 @@ class ConsoleWindow(QWidget):
                 switch.setChecked(want)
                 switch.blockSignals(False)
 
+    def _page_companion(self, page):
+        from pet_ext.living import MOODS, INTERVALS
+        living = (getattr(self.pet, "ext", None) or {}).get("living")
+        if living is not None:
+            card = page.card("情绪与主动陪伴", "", "ui.chat")
+            page.row(card, "主动陪伴", "",
+                     Switch(living.on(), lambda on: living.configure("living_on", on)))
+            page.row(card, "AI 情境说话", "将应用类别、时段、离开状态与 Codex 状态发给当前聊天节点；产生 API 用量。不开启则本地说话。",
+                     Switch(bool(self.pet.cfg.get("living_ai", False)),
+                            lambda on: living.configure("living_ai", on)))
+            levels = self.ctx.get("LINE_FREQ_LEVELS") or {}
+            page.combo(card, "语录频率", "与文案页共用；停止操作 1 分钟后才闲聊",
+                       [(k, f"{k}（{v['hint']}）") for k, v in levels.items()],
+                       self.pet.line_freq, self.pet.set_line_freq)
+            mood_label = page.hint(card, "")
+            page.buttons(card, [("陪我说一句", lambda: living.tick(force=True), None, "ui.chat")])
+            mood_timer = QTimer(page)
+            mood_timer.timeout.connect(lambda: mood_label.setText(
+                f"心情：{MOODS[living.mood]} · {living.status}"))
+            mood_timer.start(1000)
+            mood_label.setText(f"心情：{MOODS[living.mood]} · {living.status}")
+        from pet_ext.companion import FOODS, STATE_LABELS
+        ext = (getattr(self.pet, "ext", None) or {}).get("companion")
+        if ext is None:
+            page.hint(page.body, "互动扩展未加载，请重启桌宠后重试。")
+            return
+        card = page.card("喂食", "", "act.snack")
+        page.row(card, "悬浮喂食按钮", "点桌宠旁的食物按钮展开食物",
+                 Switch(ext.option("feed_bubble", True),
+                        lambda on: ext.set_option("feed_bubble", on)))
+        for food in FOODS:
+            page.row(card, food, "", self._text_button(
+                "投喂", lambda name=food: ext.feed(name), None, "act.snack"))
+        card = page.card("Codex 状态联动", "", "nav.integration")
+        page.row(card, "跟着 Codex 干活", "",
+                 Switch(ext.option("codex_link_on", True),
+                        lambda on: ext.set_option("codex_link_on", on)))
+        page.row(card, "Codex 状态立绘", "",
+                 Switch(ext.option("companion_portraits"),
+                        lambda on: ext.set_option("companion_portraits", on)))
+        state_label = page.hint(card, "")
+        card = page.card("系统监控", "", "nav.performance")
+        page.row(card, "高负载提醒", "CPU ≥90% · 内存 ≥95% · NVIDIA ≥80℃",
+                 Switch(ext.option("sys_monitor_on", True),
+                        lambda on: ext.set_option("sys_monitor_on", on)))
+        metrics_label = page.hint(card, "")
+        def refresh():
+            state_label.setText("Codex：" + (STATE_LABELS.get(ext.state, "空闲")
+                                if ext.option("codex_link_on", True) else "联动已关闭"))
+            m = ext.metrics
+            if not ext.option("sys_monitor_on", True):
+                metrics_label.setText("系统监控已关闭")
+            elif ext.error:
+                metrics_label.setText(ext.error)
+            elif m:
+                gpu = f"{m['gpu']:.0f}℃" if m.get("gpu") is not None else "不可用"
+                metrics_label.setText(f"CPU {m['cpu']:.0f}% · 内存 {m['memory']:.0f}% · NVIDIA {gpu}")
+            else:
+                metrics_label.setText("正在采样…")
+        timer = QTimer(page)
+        timer.timeout.connect(refresh)
+        timer.start(2000)
+        refresh()
+
     # ---------------- 聊天 ----------------
     def _page_chattune(self, page):
         """聊天：记忆（看 / 清空）+ 人格（整段可改）。"""
         pet = self.pet
         from pet_ext import chat as cmod
         ext = (getattr(pet, "ext", None) or {}).get("chat")
+
+        from pet_ext.model_settings import ModelSettings
+        self._model_settings = ModelSettings(page, pet)
 
         card = page.card("记忆", "她记得你们聊过什么（只存在这台机器上）", "ui.chat")
         if ext is None:

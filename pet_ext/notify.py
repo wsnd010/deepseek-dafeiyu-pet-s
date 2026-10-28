@@ -108,7 +108,10 @@ class CodexWatcher:
 
     def __init__(self, root: str = ""):
         base = os.path.expanduser("~")
-        self.root = root or os.path.join(base, ".codex-deepseek")
+        default = os.environ.get("CODEX_HOME") or os.path.join(base, ".codex")
+        if not os.path.isdir(os.path.join(default, "sessions")):
+            default = os.path.join(base, ".codex-deepseek")
+        self.root = root or default
         self.index_path = os.path.join(self.root, "session_index.jsonl")
         self.sessions_dir = os.path.join(self.root, "sessions")
         self.titles = {}             # session_id -> thread_name

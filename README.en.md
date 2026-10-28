@@ -10,9 +10,9 @@
 
 ## ⬇️ Download (Windows)
 
-[![latest release](https://img.shields.io/github/v/release/RYANFFY/deepseek-dafeiyu-pet?label=latest&v=3&cacheSeconds=300)](https://github.com/RYANFFY/deepseek-dafeiyu-pet/releases/latest)
+[![latest release](https://img.shields.io/github/v/release/wsnd010/deepseek-dafeiyu-pet-s?label=latest&v=4&cacheSeconds=300)](https://github.com/wsnd010/deepseek-dafeiyu-pet-s/releases/latest)
 
-### 👉 [**Download the latest Windows installer**](https://github.com/RYANFFY/deepseek-dafeiyu-pet/releases/latest/download/dafeiyu-pet-setup.exe)
+### 👉 [**Download the latest Windows installer**](https://github.com/wsnd010/deepseek-dafeiyu-pet-s/releases/latest/download/dafeiyu-pet-setup.exe)
 
 A ~257MB Chinese installer (most of it is the 239MB animated sprite set): double-click and click
 Next a few times — you can pick the install folder, shortcuts are created for you, and the
@@ -20,7 +20,7 @@ installer itself can be deleted afterwards.
 
 - Windows may warn about an unknown publisher (the exe is not code-signed): click "More info" → "Run anyway"
 - Packaged build keeps its settings in `%APPDATA%\大肥鱼桌宠\`
-- All versions and release notes: [Releases](https://github.com/RYANFFY/deepseek-dafeiyu-pet/releases)
+- All versions and release notes: [Releases](https://github.com/wsnd010/deepseek-dafeiyu-pet-s/releases)
 
 ## 🆕 What's new in v1.1.7
 

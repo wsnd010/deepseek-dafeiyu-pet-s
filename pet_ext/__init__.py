@@ -22,10 +22,15 @@ def load_extensions(pet):
     from . import flyout as flyout_ext
     from . import notify as notify_ext
     from . import rest as rest_ext
+    from . import node as node_ext
+    from . import companion as companion_ext
+    from . import living as living_ext
+    from . import voice as voice_ext
+    from . import feeding as feeding_ext
 
     loaded = {}
     # 顺序有意义：chat 要用 flyout 那块板子，所以 flyout 先加载
-    for mod in (notify_ext, anim_ext, flyout_ext, chat_ext, dispatch_ext, rest_ext):
+    for mod in (node_ext, notify_ext, anim_ext, flyout_ext, chat_ext, dispatch_ext, rest_ext, companion_ext, living_ext, voice_ext, feeding_ext):
         name = mod.__name__.rsplit(".", 1)[-1]
         try:
             got = mod.setup(pet)
